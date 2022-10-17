@@ -2,9 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"log"
+	"os"
 
+	"github.com/bluekeyes/go-gitdiff/gitdiff"
 	"github.com/spf13/cobra"
-	"github.com/tyspice/wd/internal"
 )
 
 // applyCmd represents the apply command
@@ -18,8 +20,8 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("apply called")
-		internal.PrintTest()
+		path := args[0]
+		apply(path)
 	},
 }
 
@@ -35,4 +37,23 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// applyCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+func apply(path string) {
+	// still figuring out the package
+	patch, err := os.Open(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	files, preamble, err := gitdiff.Parse(patch)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(len(files))
+	fmt.Println(preamble)
+	fmt.Println(*files[0])
+	fmt.Println(*files[1])
+
 }
