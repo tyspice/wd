@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"fmt"
+	"bytes"
 	"log"
 	"os"
 
@@ -46,14 +46,28 @@ func apply(path string) {
 		log.Fatal(err)
 	}
 
-	files, preamble, err := gitdiff.Parse(patch)
+	files, _, err := gitdiff.Parse(patch)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println(len(files))
-	fmt.Println(preamble)
-	fmt.Println(*files[0])
-	fmt.Println(*files[1])
+	for _, f := range files {
+		file, err := os.OpenFile(f.OldName, os.O_RDWR, f.OldMode)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer file.Close()
 
+		var output bytes.Buffer
+		if err := gitdiff.Apply(&output, file, f); err != nil {
+			log.Fatal(err)
+		}
+
+		// should definitely do something other than truncate here
+		file.Truncate(0)
+		_, err = file.WriteString(output.String())
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 }
