@@ -1,4 +1,4 @@
-module wd
+module github.com/tyspice/wd
 
 go 1.19
 

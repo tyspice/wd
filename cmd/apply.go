@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/tyspice/wd/internal"
 )
 
 // applyCmd represents the apply command
@@ -18,6 +19,7 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("apply called")
+		internal.PrintTest()
 	},
 }
 
