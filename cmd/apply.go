@@ -40,7 +40,6 @@ func init() {
 }
 
 func apply(path string) {
-	// still figuring out the package
 	patch, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
@@ -63,9 +62,8 @@ func apply(path string) {
 			log.Fatal(err)
 		}
 
-		// should definitely do something other than truncate here
 		file.Truncate(0)
-		_, err = file.WriteString(output.String())
+		_, err = file.Write(output.Bytes())
 		if err != nil {
 			log.Fatal(err)
 		}
